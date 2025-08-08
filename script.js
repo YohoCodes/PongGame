@@ -97,7 +97,8 @@
     cpuDifficulty: 'medium', // easy, medium, hard
     winner: null,
     awaitingPlayerSelect: true,
-    awaitingDifficultySelect: false
+    awaitingDifficultySelect: false,
+    twoPlayerMode: false // Track if we're in 2-player mode
   };
 
   function randChoice(arr) { return arr[(Math.random() * arr.length) | 0]; }
@@ -134,6 +135,7 @@
     // Show player selection menu
     state.awaitingPlayerSelect = true;
     state.awaitingDifficultySelect = false;
+    state.twoPlayerMode = false;
     if (selectEl) selectEl.style.display = 'grid';
     if (difficultyEl) difficultyEl.style.display = 'none';
     setStatus('Select players: press 1 or 2');
@@ -199,6 +201,7 @@
       // Show difficulty selection for 1 player
       state.awaitingPlayerSelect = false;
       state.awaitingDifficultySelect = true;
+      state.twoPlayerMode = false;
       if (selectEl) selectEl.style.display = 'none';
       if (difficultyEl) difficultyEl.style.display = 'grid';
       SOUNDS.menuSelect();
@@ -206,6 +209,7 @@
       // 2 players: human controls both sides
       state.cpuRight = false;
       state.awaitingPlayerSelect = false;
+      state.twoPlayerMode = true;
       if (selectEl) selectEl.style.display = 'none';
       setStatus('Press Space to serve');
       SOUNDS.menuSelect();
@@ -216,6 +220,7 @@
     state.cpuDifficulty = difficulty;
     state.cpuRight = true; // CPU controls left paddle
     state.awaitingDifficultySelect = false;
+    state.twoPlayerMode = false;
     if (difficultyEl) difficultyEl.style.display = 'none';
     setStatus('Press Space to serve');
     SOUNDS.menuSelect();
@@ -224,8 +229,17 @@
   function update(dt) {
     if (state.paused) return;
 
-    // Player controls - dynamic based on CPU position
-    if (state.cpuRight) {
+    // Player controls - dynamic based on CPU position and player mode
+    if (state.twoPlayerMode) {
+      // 2-player mode: both paddles controlled by humans
+      // Left paddle controlled by W/S keys
+      const leftDir = (KEYS.w ? -1 : 0) + (KEYS.s ? 1 : 0);
+      state.left.y += leftDir * SETTINGS.paddle.speed * dt;
+      
+      // Right paddle controlled by arrow keys
+      const rightDir = (KEYS.up ? -1 : 0) + (KEYS.down ? 1 : 0);
+      state.right.y += rightDir * SETTINGS.paddle.speed * dt;
+    } else if (state.cpuRight) {
       // CPU controls left paddle, human controls right paddle
       // CPU AI for left paddle
       const paddleCenter = state.left.y + SETTINGS.paddle.height / 2;
