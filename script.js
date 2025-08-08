@@ -85,8 +85,8 @@
       y: ARENA.height / 2, 
       vx: 0, 
       vy: 0, 
-      speed: SETTINGS.ball.speed, 
-      baseSpeed: SETTINGS.ball.speed, // Track base speed separately
+      speed: SETTINGS.ball.speed * 1.2, // Default to medium difficulty (1.2x)
+      baseSpeed: SETTINGS.ball.speed * 1.2, // Default to medium difficulty (1.2x)
       powerUpMultiplier: 1.0, // Track power-up multiplier
       inPlay: false 
     },
@@ -104,6 +104,18 @@
   };
 
   function randChoice(arr) { return arr[(Math.random() * arr.length) | 0]; }
+
+  // Calculate ball speed based on difficulty
+  function getBallSpeedForDifficulty() {
+    const baseSpeed = SETTINGS.ball.speed;
+    const difficultyMultipliers = {
+      easy: 1.0,
+      medium: 1.2,
+      hard: 1.5
+    };
+    const multiplier = difficultyMultipliers[state.cpuDifficulty] || 1.0;
+    return baseSpeed * multiplier;
+  }
 
   // Generate next power-up spawn time using normal distribution
   function generateNextPowerUpTime() {
@@ -124,6 +136,8 @@
     state.ball.y = ARENA.height / 2;
     const angle = (Math.random() * 0.6 - 0.3); // -17deg..17deg
     // Use the current speed (base speed * power-up multiplier)
+    state.ball.speed = getBallSpeedForDifficulty();
+    state.ball.baseSpeed = getBallSpeedForDifficulty();
     state.ball.vx = Math.cos(angle) * state.ball.speed * direction;
     state.ball.vy = Math.sin(angle) * state.ball.speed;
     state.ball.inPlay = true;
@@ -148,8 +162,8 @@
     state.right.score = 0;
     state.winner = null;
     state.paused = false;
-    state.ball.speed = SETTINGS.ball.speed;
-    state.ball.baseSpeed = SETTINGS.ball.speed;
+    state.ball.speed = getBallSpeedForDifficulty();
+    state.ball.baseSpeed = getBallSpeedForDifficulty();
     state.ball.powerUpMultiplier = 1.0;
     state.ball.inPlay = false;
     state.ballTrail = [];
@@ -247,6 +261,11 @@
     state.cpuRight = true; // CPU controls left paddle
     state.awaitingDifficultySelect = false;
     state.twoPlayerMode = false;
+    
+    // Update ball speed based on new difficulty
+    state.ball.speed = getBallSpeedForDifficulty();
+    state.ball.baseSpeed = getBallSpeedForDifficulty();
+    
     if (difficultyEl) difficultyEl.style.display = 'none';
     setStatus('Press Space to serve');
     SOUNDS.menuSelect();
@@ -534,8 +553,8 @@
     state.ball.inPlay = false;
     state.ball.vx = 0; state.ball.vy = 0;
     // Reset ball speed and power-up multiplier when scoring
-    state.ball.speed = SETTINGS.ball.speed;
-    state.ball.baseSpeed = SETTINGS.ball.speed;
+    state.ball.speed = getBallSpeedForDifficulty();
+    state.ball.baseSpeed = getBallSpeedForDifficulty();
     state.ball.powerUpMultiplier = 1.0;
     if (side === 'left') state.left.score += 1; else state.right.score += 1;
     const leader = side === 'left' ? 'Left' : 'Right';
