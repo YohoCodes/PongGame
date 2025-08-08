@@ -95,6 +95,13 @@
     }
   };
 
+  // Centralized CPU difficulty settings - change these for global updates
+  const CPU_DIFFICULTY_SETTINGS = {
+    easy: { speed: 0.9, ease: 5.0, randomness: 35, prediction: false },
+    medium: { speed: 1.0, ease: 6.0, randomness: 25, prediction: false },
+    hard: { speed: 1.1, ease: 8.0, randomness: 15, prediction: true }
+  };
+
   const KEYS = { up: false, down: false, w: false, s: false };
 
   const state = {
@@ -234,12 +241,6 @@
     if (e.key.toLowerCase() === 's') KEYS.s = true;
     if (e.key === 'p' || e.key === 'P' || e.key === 'Escape') togglePause();
     if (e.key === 'r' || e.key === 'R') reset();
-    if (e.key === '1') { 
-      state.cpuRight = !state.cpuRight; 
-      // Update status to show current configuration
-      const cpuSide = state.cpuRight ? 'Left' : 'Right';
-      setStatus(`CPU now controls ${cpuSide} paddle`);
-    }
     if (e.code === 'Space') {
       if (!state.ball.inPlay && !state.winner) serve(randChoice([-1, 1]));
     }
@@ -332,33 +333,29 @@
       state.right.y += rightDir * SETTINGS.paddle.speed * dt;
     } else if (state.cpuRight) {
       // CPU controls left paddle, human controls right paddle
-      // CPU AI for left paddle
-      const paddleCenter = state.left.y + SETTINGS.paddle.height / 2;
-      let targetY = state.ball.y;
-      
-      // Difficulty settings
-      const difficultySettings = {
-        easy: { speed: 0.9, ease: 5.0, randomness: 35, prediction: false },
-        medium: { speed: 1.0, ease: 6.5, randomness: 20, prediction: true },
-        hard: { speed: 1.15, ease: 8.0, randomness: 8, prediction: true }
-      };
-      
-      const settings = difficultySettings[state.cpuDifficulty];
-      
-      // Add prediction based on ball velocity (medium and hard only)
-      if (settings.prediction && state.ball.vx < 0) { // Ball moving towards CPU
-        const timeToReach = Math.abs((state.ball.x - (state.left.x + SETTINGS.paddle.width)) / state.ball.vx);
-        const predictedY = state.ball.y + state.ball.vy * timeToReach;
-        targetY = predictedY;
+      // CPU AI for left paddle - only when ball is in play
+      if (state.ball.inPlay) {
+        const paddleCenter = state.left.y + SETTINGS.paddle.height / 2;
+        let targetY = state.ball.y;
+        
+        // Difficulty settings
+        const settings = CPU_DIFFICULTY_SETTINGS[state.cpuDifficulty];
+        
+        // Add prediction based on ball velocity (medium and hard only)
+        if (settings.prediction && state.ball.vx < 0) { // Ball moving towards CPU
+          const timeToReach = Math.abs((state.ball.x - (state.left.x + SETTINGS.paddle.width)) / state.ball.vx);
+          const predictedY = state.ball.y + state.ball.vy * timeToReach;
+          targetY = predictedY;
+        }
+        
+        // Add randomness based on difficulty
+        targetY += (Math.random() - 0.5) * settings.randomness;
+        
+        targetY -= SETTINGS.paddle.height / 2;
+        const diff = targetY - state.left.y;
+        const cpuSpeed = SETTINGS.paddle.speed * settings.speed;
+        state.left.y += Math.max(-cpuSpeed, Math.min(cpuSpeed, diff * settings.ease)) * dt * 0.8;
       }
-      
-      // Add randomness based on difficulty
-      targetY += (Math.random() - 0.5) * settings.randomness;
-      
-      targetY -= SETTINGS.paddle.height / 2;
-      const diff = targetY - state.left.y;
-      const cpuSpeed = SETTINGS.paddle.speed * settings.speed;
-      state.left.y += Math.max(-cpuSpeed, Math.min(cpuSpeed, diff * settings.ease)) * dt * 0.8;
       
       // Human controls right paddle with arrows
       const rightDir = (KEYS.up ? -1 : 0) + (KEYS.down ? 1 : 0);
@@ -369,33 +366,29 @@
       const leftDir = (KEYS.w ? -1 : 0) + (KEYS.s ? 1 : 0);
       state.left.y += leftDir * SETTINGS.paddle.speed * dt;
       
-      // CPU AI for right paddle
-      const paddleCenter = state.right.y + SETTINGS.paddle.height / 2;
-      let targetY = state.ball.y;
-      
-      // Difficulty settings
-      const difficultySettings = {
-        easy: { speed: 0.9, ease: 5.0, randomness: 35, prediction: false },
-        medium: { speed: 1.0, ease: 6.5, randomness: 20, prediction: true },
-        hard: { speed: 1.15, ease: 8.0, randomness: 8, prediction: true }
-      };
-      
-      const settings = difficultySettings[state.cpuDifficulty];
-      
-      // Add prediction based on ball velocity (medium and hard only)
-      if (settings.prediction && state.ball.vx > 0) { // Ball moving towards CPU
-        const timeToReach = Math.abs((state.ball.x - state.right.x) / state.ball.vx);
-        const predictedY = state.ball.y + state.ball.vy * timeToReach;
-        targetY = predictedY;
+      // CPU AI for right paddle - only when ball is in play
+      if (state.ball.inPlay) {
+        const paddleCenter = state.right.y + SETTINGS.paddle.height / 2;
+        let targetY = state.ball.y;
+        
+        // Difficulty settings
+        const settings = CPU_DIFFICULTY_SETTINGS[state.cpuDifficulty];
+        
+        // Add prediction based on ball velocity (medium and hard only)
+        if (settings.prediction && state.ball.vx > 0) { // Ball moving towards CPU
+          const timeToReach = Math.abs((state.ball.x - state.right.x) / state.ball.vx);
+          const predictedY = state.ball.y + state.ball.vy * timeToReach;
+          targetY = predictedY;
+        }
+        
+        // Add randomness based on difficulty
+        targetY += (Math.random() - 0.5) * settings.randomness;
+        
+        targetY -= SETTINGS.paddle.height / 2;
+        const diff = targetY - state.right.y;
+        const cpuSpeed = SETTINGS.paddle.speed * settings.speed;
+        state.right.y += Math.max(-cpuSpeed, Math.min(cpuSpeed, diff * settings.ease)) * dt * 0.8;
       }
-      
-      // Add randomness based on difficulty
-      targetY += (Math.random() - 0.5) * settings.randomness;
-      
-      targetY -= SETTINGS.paddle.height / 2;
-      const diff = targetY - state.right.y;
-      const cpuSpeed = SETTINGS.paddle.speed * settings.speed;
-      state.right.y += Math.max(-cpuSpeed, Math.min(cpuSpeed, diff * settings.ease)) * dt * 0.8;
     }
 
     // Clamp paddles
@@ -603,6 +596,10 @@
     state.ball.baseSpeed = SETTINGS.ball.speed * state.ball.difficultyMultiplier;
     state.ball.speed = state.ball.baseSpeed;
     if (side === 'left') state.left.score += 1; else state.right.score += 1;
+    
+    // Reset paddles to center position
+    centerPaddles();
+    
     const leader = side === 'left' ? 'Left' : 'Right';
     setStatus(`${leader} scores! Space to serve`);
     SOUNDS.score();
