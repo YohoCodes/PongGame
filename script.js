@@ -98,8 +98,8 @@
   // Centralized CPU difficulty settings - change these for global updates
   const CPU_DIFFICULTY_SETTINGS = {
     easy: { speed: 0.9, ease: 5.0, randomness: 35, prediction: false },
-    medium: { speed: 1.0, ease: 6.0, randomness: 25, prediction: false },
-    hard: { speed: 1.1, ease: 8.0, randomness: 15, prediction: true }
+    medium: { speed: 1.1, ease: 7.0, randomness: 25, prediction: false },
+    hard: { speed: 1.3, ease: 9.0, randomness: 15, prediction: false}
   };
 
   const KEYS = { up: false, down: false, w: false, s: false };
