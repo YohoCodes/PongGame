@@ -722,14 +722,22 @@
     // Check if ball is powered up for stretching effect
     const isPoweredUp = state.ball.powerUpMultiplier > 1.0;
     const stretchFactor = isPoweredUp ? 1.5 : 1.0;
-    const stretchDirection = state.ball.vx > 0 ? 1 : -1;
     
     ctx.beginPath();
-    if (isPoweredUp) {
-      // Draw stretched ball (ellipse)
+    if (isPoweredUp && (state.ball.vx !== 0 || state.ball.vy !== 0)) {
+      // Draw stretched ball (ellipse) in the direction of movement
       ctx.save();
       ctx.translate(state.ball.x, state.ball.y);
+      
+      // Calculate the angle of movement
+      const movementAngle = Math.atan2(state.ball.vy, state.ball.vx);
+      
+      // Rotate to align with movement direction
+      ctx.rotate(movementAngle);
+      
+      // Scale in the direction of movement (stretch horizontally after rotation)
       ctx.scale(stretchFactor, 1);
+      
       ctx.arc(0, 0, SETTINGS.ball.radius, 0, Math.PI * 2);
       ctx.restore();
     } else {
