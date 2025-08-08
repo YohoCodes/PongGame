@@ -92,6 +92,8 @@
     },
     ballTrail: [], // Array to store trail positions
     powerUps: [], // Array to store multiple power-ups
+    powerUpTimer: 0, // Timer for power-up spawning
+    nextPowerUpTime: 0, // Time until next power-up spawn
     paused: false,
     cpuRight: true,
     cpuDifficulty: 'medium', // easy, medium, hard
@@ -103,6 +105,20 @@
 
   function randChoice(arr) { return arr[(Math.random() * arr.length) | 0]; }
 
+  // Generate next power-up spawn time using normal distribution
+  function generateNextPowerUpTime() {
+    // Box-Muller transform to generate normal distribution
+    const u1 = Math.random();
+    const u2 = Math.random();
+    const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+    
+    // Convert to our desired distribution (mean=5, std=1)
+    const timeInSeconds = 5 + z0 * 1;
+    
+    // Ensure non-negative time (truncate at 0)
+    return Math.max(0, timeInSeconds);
+  }
+
   function serve(direction = randChoice([-1, 1])) {
     state.ball.x = ARENA.width / 2;
     state.ball.y = ARENA.height / 2;
@@ -112,6 +128,13 @@
     state.ball.vy = Math.sin(angle) * state.ball.speed;
     state.ball.inPlay = true;
     state.ballTrail = []; // Clear trail on serve
+    
+    // Initialize power-up timer if not already set
+    if (state.nextPowerUpTime === 0) {
+      state.powerUpTimer = 0;
+      state.nextPowerUpTime = generateNextPowerUpTime();
+    }
+    
     state.winner = null;
     setStatus('Playing');
     SOUNDS.gameStart();
@@ -130,6 +153,9 @@
     state.ball.powerUpMultiplier = 1.0;
     state.ball.inPlay = false;
     state.ballTrail = [];
+    state.powerUps = []; // Clear power-ups when resetting
+    state.powerUpTimer = 0; // Reset power-up timer
+    state.nextPowerUpTime = generateNextPowerUpTime(); // Generate first power-up time
     centerPaddles();
     
     // Show player selection menu
@@ -334,9 +360,10 @@
     
     // Power-up system
     if (state.ball.inPlay) {
-      // Randomly spawn power-up (0.5% chance per frame - increased from 0.3% but balanced)
-      // Limit to maximum of 4 power-ups at once
-      if (Math.random() < 0.005 && state.powerUps.length < 4) {
+      // Time-based power-up spawning with normal distribution (5s mean, 1s std)
+      state.powerUpTimer += dt;
+      
+      if (state.powerUpTimer >= state.nextPowerUpTime && state.powerUps.length < 6) {
         // Try to find a valid position for the new power-up
         let attempts = 0;
         const maxAttempts = 50; // Prevent infinite loops
@@ -381,6 +408,10 @@
           state.powerUps.push(newPowerUp);
           SOUNDS.powerUpSpawn();
         }
+        
+        // Reset timer and generate next spawn time
+        state.powerUpTimer = 0;
+        state.nextPowerUpTime = generateNextPowerUpTime();
       }
       
       // Check power-up collision with ball
@@ -415,6 +446,9 @@
     } else {
       // Clear power-ups when ball is not in play
       state.powerUps = [];
+      // Reset power-up timer when ball is not in play
+      state.powerUpTimer = 0;
+      state.nextPowerUpTime = 0;
     }
 
     // Wall collisions
