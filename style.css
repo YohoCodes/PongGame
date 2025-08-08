@@ -32,6 +32,15 @@ body {
 .header {
   padding: 20px 24px;
   text-align: center;
+  background: linear-gradient(180deg, 
+    rgba(26, 26, 46, 0.9) 0%, 
+    rgba(26, 26, 46, 0.7) 30%, 
+    rgba(26, 26, 46, 0.4) 60%, 
+    rgba(26, 26, 46, 0.1) 85%, 
+    transparent 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .logo-container {
@@ -123,6 +132,242 @@ body {
   display: grid;
   place-items: center;
   padding: 12px 16px 24px;
+  position: relative;
+}
+
+.space-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(1px 1px at 23px 17px, #ffffff, transparent),
+    radial-gradient(2px 2px at 67px 83px, #ffffff, transparent),
+    radial-gradient(1px 1px at 143px 29px, #ffffff, transparent),
+    radial-gradient(2px 2px at 189px 91px, #ffffff, transparent),
+    radial-gradient(1px 1px at 234px 47px, #ffffff, transparent),
+    radial-gradient(2px 2px at 278px 73px, #ffffff, transparent),
+    radial-gradient(1px 1px at 312px 13px, #ffffff, transparent),
+    radial-gradient(2px 2px at 356px 89px, #ffffff, transparent),
+    radial-gradient(1px 1px at 401px 31px, #ffffff, transparent),
+    radial-gradient(2px 2px at 445px 67px, #ffffff, transparent),
+    radial-gradient(1px 1px at 489px 93px, #ffffff, transparent),
+    radial-gradient(2px 2px at 523px 19px, #ffffff, transparent),
+    radial-gradient(1px 1px at 567px 85px, #ffffff, transparent),
+    radial-gradient(2px 2px at 611px 41px, #ffffff, transparent),
+    radial-gradient(1px 1px at 655px 77px, #ffffff, transparent),
+    radial-gradient(2px 2px at 699px 23px, #ffffff, transparent),
+    radial-gradient(1px 1px at 743px 69px, #ffffff, transparent),
+    radial-gradient(2px 2px at 787px 95px, #ffffff, transparent),
+    radial-gradient(1px 1px at 831px 37px, #ffffff, transparent),
+    radial-gradient(2px 2px at 875px 63px, #ffffff, transparent),
+    radial-gradient(1px 1px at 919px 89px, #ffffff, transparent),
+    radial-gradient(1px 1px at 45px 55px, #ffffff, transparent),
+    radial-gradient(2px 2px at 89px 21px, #ffffff, transparent),
+    radial-gradient(1px 1px at 133px 87px, #ffffff, transparent),
+    radial-gradient(2px 2px at 177px 43px, #ffffff, transparent),
+    radial-gradient(1px 1px at 221px 79px, #ffffff, transparent),
+    radial-gradient(2px 2px at 265px 15px, #ffffff, transparent),
+    radial-gradient(1px 1px at 309px 81px, #ffffff, transparent),
+    radial-gradient(2px 2px at 353px 27px, #ffffff, transparent),
+    radial-gradient(1px 1px at 397px 73px, #ffffff, transparent),
+    radial-gradient(2px 2px at 441px 99px, #ffffff, transparent),
+    radial-gradient(1px 1px at 485px 35px, #ffffff, transparent),
+    radial-gradient(2px 2px at 529px 71px, #ffffff, transparent),
+    radial-gradient(1px 1px at 573px 7px, #ffffff, transparent),
+    radial-gradient(2px 2px at 617px 83px, #ffffff, transparent),
+    radial-gradient(1px 1px at 661px 39px, #ffffff, transparent),
+    radial-gradient(2px 2px at 705px 75px, #ffffff, transparent),
+    radial-gradient(1px 1px at 749px 21px, #ffffff, transparent),
+    radial-gradient(2px 2px at 793px 67px, #ffffff, transparent),
+    radial-gradient(1px 1px at 837px 93px, #ffffff, transparent),
+    radial-gradient(2px 2px at 881px 29px, #ffffff, transparent),
+    radial-gradient(1px 1px at 925px 65px, #ffffff, transparent),
+    radial-gradient(1px 1px at 11px 61px, #ffffff, transparent),
+    radial-gradient(1px 1px at 55px 97px, #ffffff, transparent),
+    radial-gradient(1px 1px at 99px 33px, #ffffff, transparent),
+    radial-gradient(1px 1px at 143px 69px, #ffffff, transparent),
+    radial-gradient(1px 1px at 187px 5px, #ffffff, transparent),
+    radial-gradient(1px 1px at 231px 81px, #ffffff, transparent),
+    radial-gradient(1px 1px at 275px 37px, #ffffff, transparent),
+    radial-gradient(1px 1px at 319px 73px, #ffffff, transparent),
+    radial-gradient(1px 1px at 363px 19px, #ffffff, transparent),
+    radial-gradient(1px 1px at 407px 85px, #ffffff, transparent),
+    radial-gradient(1px 1px at 451px 41px, #ffffff, transparent),
+    radial-gradient(1px 1px at 495px 77px, #ffffff, transparent),
+    radial-gradient(1px 1px at 539px 23px, #ffffff, transparent),
+    radial-gradient(1px 1px at 583px 69px, #ffffff, transparent),
+    radial-gradient(1px 1px at 627px 95px, #ffffff, transparent),
+    radial-gradient(1px 1px at 671px 31px, #ffffff, transparent),
+    radial-gradient(1px 1px at 715px 67px, #ffffff, transparent),
+    radial-gradient(1px 1px at 759px 13px, #ffffff, transparent),
+    radial-gradient(1px 1px at 803px 79px, #ffffff, transparent),
+    radial-gradient(1px 1px at 847px 35px, #ffffff, transparent),
+    radial-gradient(1px 1px at 891px 71px, #ffffff, transparent);
+  background-repeat: repeat;
+  background-size: 940px 100px;
+  animation: starTwinkle 4s ease-in-out infinite;
+}
+
+.planets {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.planet {
+  position: absolute;
+  font-size: 32px;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+  animation: planetFloat 8s ease-in-out infinite;
+}
+
+.planet-1 {
+  top: 15%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.planet-2 {
+  top: 25%;
+  right: 15%;
+  font-size: 28px;
+  animation-delay: 2s;
+}
+
+.planet-3 {
+  bottom: 20%;
+  left: 20%;
+  font-size: 24px;
+  animation-delay: 4s;
+}
+
+.ufos {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.ufo {
+  position: absolute;
+  font-size: 24px;
+  filter: drop-shadow(0 0 8px #f7931e);
+  animation: ufoFly 12s linear infinite;
+}
+
+.ufo-1 {
+  top: 30%;
+  left: -50px;
+  animation-delay: 0s;
+}
+
+.ufo-2 {
+  top: 60%;
+  right: -50px;
+  animation-delay: 6s;
+  transform: scaleX(-1);
+}
+
+.asteroids {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.asteroid {
+  position: absolute;
+  font-size: 20px;
+  filter: drop-shadow(0 0 6px #ff6b35);
+  animation: asteroidSpin 6s linear infinite;
+}
+
+.asteroid-1 {
+  top: 40%;
+  left: 5%;
+  animation-delay: 0s;
+}
+
+.asteroid-2 {
+  top: 70%;
+  right: 10%;
+  animation-delay: 2s;
+}
+
+.asteroid-3 {
+  top: 15%;
+  right: 25%;
+  animation-delay: 4s;
+}
+
+.satellites {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.satellite {
+  position: absolute;
+  font-size: 18px;
+  filter: drop-shadow(0 0 6px #8b5cf6);
+  animation: satelliteOrbit 10s linear infinite;
+}
+
+.satellite-1 {
+  top: 20%;
+  left: 80%;
+  animation-delay: 0s;
+}
+
+.satellite-2 {
+  bottom: 30%;
+  left: 15%;
+  animation-delay: 5s;
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+@keyframes planetFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+@keyframes ufoFly {
+  0% { transform: translateX(-100px); }
+  100% { transform: translateX(calc(100vw + 100px)); }
+}
+
+@keyframes asteroidSpin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes satelliteOrbit {
+  0% { transform: rotate(0deg) translateX(0px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(0px) rotate(-360deg); }
 }
 
 canvas#game {
@@ -133,6 +378,8 @@ canvas#game {
   background: linear-gradient(180deg, #1e3a8a 0%, #1e1b4b 100%);
   outline: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  position: relative;
+  z-index: 2;
 }
 
 .hud {
