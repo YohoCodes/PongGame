@@ -378,15 +378,34 @@
           validPosition = true;
           const minDistance = 50; // Minimum distance between power-up centers (20px radius + 20px radius + 10px gap = 50px total)
           
-          for (const existingPowerUp of state.powerUps) {
-            const distance = Math.sqrt(
-              Math.pow(testX - existingPowerUp.x, 2) + 
-              Math.pow(testY - existingPowerUp.y, 2)
-            );
-            
-            if (distance < minDistance) {
-              validPosition = false;
-              break;
+          // Check if position is in the longitude of either paddle
+          const leftPaddleX = state.left.x;
+          const rightPaddleX = state.right.x;
+          const paddleWidth = SETTINGS.paddle.width;
+          const powerUpRadius = 20;
+          
+          // Check if power-up would overlap with left paddle's longitude
+          if (testX >= leftPaddleX - powerUpRadius && testX <= leftPaddleX + paddleWidth + powerUpRadius) {
+            validPosition = false;
+          }
+          
+          // Check if power-up would overlap with right paddle's longitude
+          if (testX >= rightPaddleX - powerUpRadius && testX <= rightPaddleX + paddleWidth + powerUpRadius) {
+            validPosition = false;
+          }
+          
+          // Only check existing power-ups if position is not in paddle longitude
+          if (validPosition) {
+            for (const existingPowerUp of state.powerUps) {
+              const distance = Math.sqrt(
+                Math.pow(testX - existingPowerUp.x, 2) + 
+                Math.pow(testY - existingPowerUp.y, 2)
+              );
+              
+              if (distance < minDistance) {
+                validPosition = false;
+                break;
+              }
             }
           }
           
