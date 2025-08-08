@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Keyboard Tennis</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="header">
+        <div class="logo-container">
+          <h1 class="title">SPACE PONG</h1>
+          <div class="subtitle">INVADERS EDITION</div>
+          <div class="alien-ships">
+            <div class="alien">👾</div>
+            <div class="alien">👾</div>
+            <div class="alien">👾</div>
+          </div>
+        </div>
+      </header>
+      <section class="stage">
+        <canvas id="game" width="900" height="600" aria-label="Tennis game canvas" role="img"></canvas>
+        <div class="hud">
+          <div class="player-select" id="playerSelect" aria-modal="true" role="dialog">
+            <div class="player-select__card">
+              <h2>Select Players</h2>
+              <p class="hint">Press 1 or 2, or click a button below</p>
+              <div class="player-select__actions">
+                <button id="btn1P" class="btn">1 Player</button>
+                <button id="btn2P" class="btn">2 Players</button>
+              </div>
+            </div>
+          </div>
+          <div class="difficulty-select" id="difficultySelect" aria-modal="true" role="dialog" style="display: none;">
+            <div class="player-select__card">
+              <h2>Select Difficulty</h2>
+              <p class="hint">Press E, M, or H, or click a button below</p>
+              <div class="player-select__actions">
+                <button id="btnEasy" class="btn">Easy</button>
+                <button id="btnMedium" class="btn">Medium</button>
+                <button id="btnHard" class="btn">Hard</button>
+              </div>
+            </div>
+          </div>
+          <div class="instructions" id="instructions">
+            <div class="instr-title">Controls</div>
+            <ul>
+              <li><span>↑ / ↓</span> Move Right Paddle (Player)</li>
+              <li><span>W / S</span> Move Left Paddle</li>
+              <li><span>P / Esc</span> Pause / Resume</li>
+              <li><span>R</span> Reset Match</li>
+              <li><span>1</span> Toggle CPU Left</li>
+              <li><span>Space</span> Serve after score</li>
+            </ul>
+          </div>
+          <div class="status" id="status" aria-live="polite"></div>
+        </div>
+      </section>
+    </main>
+    <script defer src="./script.js"></script>
+  </body>
+  </html>
+
+
