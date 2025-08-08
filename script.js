@@ -321,7 +321,8 @@
     // Power-up system
     if (state.ball.inPlay) {
       // Randomly spawn power-up (0.5% chance per frame - increased from 0.3% but balanced)
-      if (Math.random() < 0.005) {
+      // Limit to maximum of 4 power-ups at once
+      if (Math.random() < 0.005 && state.powerUps.length < 4) {
         const newPowerUp = {
           x: Math.random() * (ARENA.width - 100) + 50,
           y: Math.random() * (ARENA.height - 100) + 50,
