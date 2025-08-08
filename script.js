@@ -4,11 +4,15 @@
   const statusEl = document.getElementById('status');
   const selectEl = document.getElementById('playerSelect');
   const difficultyEl = document.getElementById('difficultySelect');
+  const speedEl = document.getElementById('speedSelect');
   const btn1P = document.getElementById('btn1P');
   const btn2P = document.getElementById('btn2P');
   const btnEasy = document.getElementById('btnEasy');
   const btnMedium = document.getElementById('btnMedium');
   const btnHard = document.getElementById('btnHard');
+  const btnSlow = document.getElementById('btnSlow');
+  const btnRegular = document.getElementById('btnRegular');
+  const btnFast = document.getElementById('btnFast');
 
   // Audio context for vintage arcade sounds
   const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -75,6 +79,22 @@
     scoreToWin: 8
   };
 
+  // Centralized speed configuration - change multipliers here for global updates
+  const SPEED_CONFIG = {
+    // One-player mode difficulty multipliers
+    difficulty: {
+      easy: 1.0,
+      medium: 1.5,
+      hard: 1.7
+    },
+    // Two-player mode speed multipliers
+    twoPlayer: {
+      slow: 1.0,
+      regular: 1.5,
+      fast: 1.7
+    }
+  };
+
   const KEYS = { up: false, down: false, w: false, s: false };
 
   const state = {
@@ -101,7 +121,9 @@
     winner: null,
     awaitingPlayerSelect: true,
     awaitingDifficultySelect: false,
-    twoPlayerMode: false // Track if we're in 2-player mode
+    awaitingSpeedSelect: false,
+    twoPlayerMode: false, // Track if we're in 2-player mode
+    speedSelection: 'regular' // Track selected speed for 2-player mode
   };
 
   function randChoice(arr) { return arr[(Math.random() * arr.length) | 0]; }
@@ -163,9 +185,12 @@
     // Show player selection menu
     state.awaitingPlayerSelect = true;
     state.awaitingDifficultySelect = false;
+    state.awaitingSpeedSelect = false;
     state.twoPlayerMode = false;
+    state.speedSelection = 'regular';
     if (selectEl) selectEl.style.display = 'grid';
     if (difficultyEl) difficultyEl.style.display = 'none';
+    if (speedEl) speedEl.style.display = 'none';
     setStatus('Select players: press 1 or 2');
   }
 
@@ -193,6 +218,14 @@
       if (e.key.toLowerCase() === 'e') { chooseDifficulty('easy'); e.preventDefault(); return; }
       if (e.key.toLowerCase() === 'm') { chooseDifficulty('medium'); e.preventDefault(); return; }
       if (e.key.toLowerCase() === 'h') { chooseDifficulty('hard'); e.preventDefault(); return; }
+      return; // ignore other keys until selected
+    }
+    
+    // Handle speed selection
+    if (state.awaitingSpeedSelect) {
+      if (e.key.toLowerCase() === 's') { chooseSpeed('slow'); e.preventDefault(); return; }
+      if (e.key.toLowerCase() === 'r') { chooseSpeed('regular'); e.preventDefault(); return; }
+      if (e.key.toLowerCase() === 'f') { chooseSpeed('fast'); e.preventDefault(); return; }
       return; // ignore other keys until selected
     }
     if (e.key === 'ArrowUp') KEYS.up = true;
@@ -229,17 +262,21 @@
       // Show difficulty selection for 1 player
       state.awaitingPlayerSelect = false;
       state.awaitingDifficultySelect = true;
+      state.awaitingSpeedSelect = false;
       state.twoPlayerMode = false;
       if (selectEl) selectEl.style.display = 'none';
       if (difficultyEl) difficultyEl.style.display = 'grid';
+      if (speedEl) speedEl.style.display = 'none';
       SOUNDS.menuSelect();
     } else {
-      // 2 players: human controls both sides
-      state.cpuRight = false;
+      // Show speed selection for 2 players
       state.awaitingPlayerSelect = false;
+      state.awaitingDifficultySelect = false;
+      state.awaitingSpeedSelect = true;
       state.twoPlayerMode = true;
       if (selectEl) selectEl.style.display = 'none';
-      setStatus('Press Space to serve');
+      if (difficultyEl) difficultyEl.style.display = 'none';
+      if (speedEl) speedEl.style.display = 'grid';
       SOUNDS.menuSelect();
     }
   }
@@ -248,20 +285,34 @@
     state.cpuDifficulty = difficulty;
     state.cpuRight = true; // CPU controls left paddle
     state.awaitingDifficultySelect = false;
+    state.awaitingSpeedSelect = false;
     state.twoPlayerMode = false;
     
-    // Set ball speed multiplier based on difficulty
-    const difficultyMultipliers = {
-      easy: 1.0,
-      medium: 1.5,
-      hard: 1.7
-    };
-    
-    state.ball.difficultyMultiplier = difficultyMultipliers[difficulty];
+    // Set ball speed multiplier based on difficulty using centralized config
+    state.ball.difficultyMultiplier = SPEED_CONFIG.difficulty[difficulty];
     state.ball.baseSpeed = SETTINGS.ball.speed * state.ball.difficultyMultiplier;
     state.ball.speed = state.ball.baseSpeed * state.ball.powerUpMultiplier;
     
     if (difficultyEl) difficultyEl.style.display = 'none';
+    if (speedEl) speedEl.style.display = 'none';
+    setStatus('Press Space to serve');
+    SOUNDS.menuSelect();
+  }
+
+  function chooseSpeed(speed) {
+    state.speedSelection = speed;
+    state.cpuRight = false; // No CPU in 2-player mode
+    state.awaitingDifficultySelect = false;
+    state.awaitingSpeedSelect = false;
+    state.twoPlayerMode = true;
+    
+    // Set ball speed multiplier based on speed using centralized config
+    state.ball.difficultyMultiplier = SPEED_CONFIG.twoPlayer[speed];
+    state.ball.baseSpeed = SETTINGS.ball.speed * state.ball.difficultyMultiplier;
+    state.ball.speed = state.ball.baseSpeed * state.ball.powerUpMultiplier;
+    
+    if (difficultyEl) difficultyEl.style.display = 'none';
+    if (speedEl) speedEl.style.display = 'none';
     setStatus('Press Space to serve');
     SOUNDS.menuSelect();
   }
@@ -1007,6 +1058,9 @@
   btnEasy?.addEventListener('click', () => chooseDifficulty('easy'));
   btnMedium?.addEventListener('click', () => chooseDifficulty('medium'));
   btnHard?.addEventListener('click', () => chooseDifficulty('hard'));
+  btnSlow?.addEventListener('click', () => chooseSpeed('slow'));
+  btnRegular?.addEventListener('click', () => chooseSpeed('regular'));
+  btnFast?.addEventListener('click', () => chooseSpeed('fast'));
   
   // Resume audio context on first user interaction
   document.addEventListener('click', () => {

@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Keyboard Tennis</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎾</text></svg>">
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
@@ -61,6 +62,17 @@
                 <button id="btnEasy" class="btn">Easy</button>
                 <button id="btnMedium" class="btn">Medium</button>
                 <button id="btnHard" class="btn">Hard</button>
+              </div>
+            </div>
+          </div>
+          <div class="speed-select" id="speedSelect" aria-modal="true" role="dialog" style="display: none;">
+            <div class="player-select__card">
+              <h2>Select Ball Speed</h2>
+              <p class="hint">Press S, R, or F, or click a button below</p>
+              <div class="player-select__actions">
+                <button id="btnSlow" class="btn">Slow</button>
+                <button id="btnRegular" class="btn">Regular</button>
+                <button id="btnFast" class="btn">Fast</button>
               </div>
             </div>
           </div>

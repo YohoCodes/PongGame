@@ -388,7 +388,8 @@ canvas#game {
 }
 
 .player-select,
-.difficulty-select {
+.difficulty-select,
+.speed-select {
   position: fixed;
   inset: 0;
   display: grid;
