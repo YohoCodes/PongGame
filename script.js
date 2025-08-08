@@ -323,15 +323,50 @@
       // Randomly spawn power-up (0.5% chance per frame - increased from 0.3% but balanced)
       // Limit to maximum of 4 power-ups at once
       if (Math.random() < 0.005 && state.powerUps.length < 4) {
-        const newPowerUp = {
-          x: Math.random() * (ARENA.width - 100) + 50,
-          y: Math.random() * (ARENA.height - 100) + 50,
-          radius: 20, // Increased from 12 to 20 for larger power-ups
-          collected: false,
-          speedBoost: 2.0 // Increased from 1.5 to 2.0 for 2x speed boost
-        };
-        state.powerUps.push(newPowerUp);
-        SOUNDS.powerUpSpawn();
+        // Try to find a valid position for the new power-up
+        let attempts = 0;
+        const maxAttempts = 50; // Prevent infinite loops
+        let validPosition = false;
+        let newPowerUp = null;
+        
+        while (attempts < maxAttempts && !validPosition) {
+          const testX = Math.random() * (ARENA.width - 100) + 50;
+          const testY = Math.random() * (ARENA.height - 100) + 50;
+          
+          // Check if this position is far enough from existing power-ups
+          validPosition = true;
+          const minDistance = 50; // Minimum distance between power-up centers (20px radius + 20px radius + 10px gap = 50px total)
+          
+          for (const existingPowerUp of state.powerUps) {
+            const distance = Math.sqrt(
+              Math.pow(testX - existingPowerUp.x, 2) + 
+              Math.pow(testY - existingPowerUp.y, 2)
+            );
+            
+            if (distance < minDistance) {
+              validPosition = false;
+              break;
+            }
+          }
+          
+          if (validPosition) {
+            newPowerUp = {
+              x: testX,
+              y: testY,
+              radius: 20, // Increased from 12 to 20 for larger power-ups
+              collected: false,
+              speedBoost: 2.0 // Increased from 1.5 to 2.0 for 2x speed boost
+            };
+          }
+          
+          attempts++;
+        }
+        
+        // Only add the power-up if we found a valid position
+        if (newPowerUp) {
+          state.powerUps.push(newPowerUp);
+          SOUNDS.powerUpSpawn();
+        }
       }
       
       // Check power-up collision with ball
@@ -372,31 +407,11 @@
     if (state.ball.y - SETTINGS.ball.radius <= 0 && state.ball.vy < 0) {
       state.ball.y = SETTINGS.ball.radius;
       state.ball.vy *= -1;
-      // Reset ball speed to normal when hitting wall
-      state.ball.powerUpMultiplier = 1.0;
-      state.ball.speed = state.ball.baseSpeed;
-      // Update velocity components to reflect the new speed
-      const currentSpeed = Math.sqrt(state.ball.vx * state.ball.vx + state.ball.vy * state.ball.vy);
-      if (currentSpeed > 0) {
-        const speedRatio = state.ball.speed / currentSpeed;
-        state.ball.vx *= speedRatio;
-        state.ball.vy *= speedRatio;
-      }
       SOUNDS.wallHit();
     }
     if (state.ball.y + SETTINGS.ball.radius >= ARENA.height && state.ball.vy > 0) {
       state.ball.y = ARENA.height - SETTINGS.ball.radius;
       state.ball.vy *= -1;
-      // Reset ball speed to normal when hitting wall
-      state.ball.powerUpMultiplier = 1.0;
-      state.ball.speed = state.ball.baseSpeed;
-      // Update velocity components to reflect the new speed
-      const currentSpeed = Math.sqrt(state.ball.vx * state.ball.vx + state.ball.vy * state.ball.vy);
-      if (currentSpeed > 0) {
-        const speedRatio = state.ball.speed / currentSpeed;
-        state.ball.vx *= speedRatio;
-        state.ball.vy *= speedRatio;
-      }
       SOUNDS.wallHit();
     }
 
