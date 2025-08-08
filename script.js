@@ -58,7 +58,9 @@
       playSound(600, 0.1, 'sine', 0.3);
       setTimeout(() => playSound(800, 0.15, 'sine', 0.3), 100);
       setTimeout(() => playSound(1000, 0.2, 'sine', 0.3), 200);
-    }
+    },
+    countdownBeep1: () => playSound(400, 0.3, 'sine', 0.2),
+    countdownBeep2: () => playSound(600, 0.4, 'sine', 0.3)
   };
 
   const ARENA = { width: canvas.width, height: canvas.height };
@@ -130,7 +132,13 @@
     awaitingDifficultySelect: false,
     awaitingSpeedSelect: false,
     twoPlayerMode: false, // Track if we're in 2-player mode
-    speedSelection: 'regular' // Track selected speed for 2-player mode
+    speedSelection: 'regular', // Track selected speed for 2-player mode
+    countdown: {
+      active: false,
+      phase: 'ready', // 'ready', 'set', 'go'
+      timer: 0,
+      totalTime: 0
+    }
   };
 
   function randChoice(arr) { return arr[(Math.random() * arr.length) | 0]; }
@@ -147,6 +155,15 @@
     
     // Ensure non-negative time (truncate at 0)
     return Math.max(0, timeInSeconds);
+  }
+
+  function startCountdown() {
+    state.countdown.active = true;
+    state.countdown.phase = 'ready';
+    state.countdown.timer = 0;
+    state.countdown.totalTime = 0;
+    SOUNDS.countdownBeep1();
+    setStatus('Ready...');
   }
 
   function serve(direction = randChoice([-1, 1])) {
@@ -188,6 +205,12 @@
     state.powerUpTimer = 0; // Reset power-up timer
     state.nextPowerUpTime = generateNextPowerUpTime(); // Generate first power-up time
     centerPaddles();
+    
+    // Reset countdown
+    state.countdown.active = false;
+    state.countdown.phase = 'ready';
+    state.countdown.timer = 0;
+    state.countdown.totalTime = 0;
     
     // Show player selection menu
     state.awaitingPlayerSelect = true;
@@ -242,7 +265,9 @@
     if (e.key === 'p' || e.key === 'P' || e.key === 'Escape') togglePause();
     if (e.key === 'r' || e.key === 'R') reset();
     if (e.code === 'Space') {
-      if (!state.ball.inPlay && !state.winner) serve(randChoice([-1, 1]));
+      if (!state.ball.inPlay && !state.winner && !state.countdown.active) {
+        startCountdown();
+      }
     }
   });
 
@@ -320,6 +345,28 @@
 
   function update(dt) {
     if (state.paused) return;
+
+    // Handle countdown
+    if (state.countdown.active) {
+      state.countdown.timer += dt;
+      state.countdown.totalTime += dt;
+      
+      if (state.countdown.phase === 'ready' && state.countdown.timer >= 1.0) {
+        // Transition to "Set"
+        state.countdown.phase = 'set';
+        state.countdown.timer = 0;
+        SOUNDS.countdownBeep1();
+        setStatus('Set...');
+      } else if (state.countdown.phase === 'set' && state.countdown.timer >= 1.0) {
+        // Transition to "GO" (game starts immediately)
+        state.countdown.phase = 'go';
+        state.countdown.timer = 0;
+        state.countdown.active = false;
+        SOUNDS.countdownBeep2();
+        serve(randChoice([-1, 1]));
+        return; // Skip the rest of the update for this frame
+      }
+    }
 
     // Player controls - dynamic based on CPU position and player mode
     if (state.twoPlayerMode) {
@@ -599,6 +646,12 @@
     
     // Reset paddles to center position
     centerPaddles();
+    
+    // Reset countdown
+    state.countdown.active = false;
+    state.countdown.phase = 'ready';
+    state.countdown.timer = 0;
+    state.countdown.totalTime = 0;
     
     const leader = side === 'left' ? 'Left' : 'Right';
     setStatus(`${leader} scores! Space to serve`);
@@ -957,7 +1010,7 @@
   }
 
   function drawOverlay() {
-    if (state.paused || !state.ball.inPlay || state.winner) {
+    if (state.paused || !state.ball.inPlay || state.winner || state.countdown.active) {
       ctx.save();
       
       // FROST GLASS EFFECT - ULTRA HYPE! ❄️
@@ -976,7 +1029,22 @@
       }
       
       // HOLOGRAPHIC TEXT WITH GLOW! 🌟
-      const text = state.winner ? `${state.winner} WINS!` : (!state.ball.inPlay ? 'PRESS SPACE TO SERVE' : 'PAUSED');
+      let text;
+      if (state.countdown.active) {
+        // Countdown text
+        if (state.countdown.phase === 'ready') {
+          text = 'READY';
+        } else if (state.countdown.phase === 'set') {
+          text = 'SET';
+        }
+        // Note: "GO" phase doesn't display text - game starts immediately
+      } else if (state.winner) {
+        text = `${state.winner} WINS!`;
+      } else if (!state.ball.inPlay) {
+        text = 'PRESS SPACE TO SERVE';
+      } else {
+        text = 'PAUSED';
+      }
       
       // Text shadow
       ctx.shadowColor = '#f7931e';
