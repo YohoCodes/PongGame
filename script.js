@@ -362,7 +362,6 @@
         state.countdown.phase = 'go';
         state.countdown.timer = 0;
         state.countdown.active = false;
-        SOUNDS.countdownBeep2();
         serve(randChoice([-1, 1]));
         return; // Skip the rest of the update for this frame
       }
