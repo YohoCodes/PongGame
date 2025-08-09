@@ -237,23 +237,133 @@ body {
 }
 
 .planet-1 {
-  top: 15%;
-  left: 10%;
+  top: 8%;
+  left: 5%;
   animation-delay: 0s;
 }
 
 .planet-2 {
-  top: 25%;
-  right: 15%;
+  top: 12%;
+  right: 8%;
   font-size: 28px;
   animation-delay: 2s;
 }
 
 .planet-3 {
-  bottom: 20%;
-  left: 20%;
+  bottom: 8%;
+  left: 8%;
   font-size: 24px;
   animation-delay: 4s;
+}
+
+.planet-4 {
+  top: 85%;
+  left: 12%;
+  font-size: 28px;
+  animation-delay: 1s;
+}
+
+.planet-5 {
+  top: 18%;
+  right: 5%;
+  font-size: 20px;
+  animation-delay: 3s;
+}
+
+.planet-6 {
+  top: 75%;
+  right: 12%;
+  font-size: 26px;
+  animation-delay: 5s;
+}
+
+.planet-7 {
+  top: 35%;
+  left: 5%;
+  font-size: 22px;
+  animation-delay: 2s;
+}
+
+.planet-8 {
+  top: 65%;
+  right: 8%;
+  font-size: 24px;
+  animation-delay: 6s;
+}
+
+.star {
+  position: absolute;
+  filter: drop-shadow(0 0 8px #ffd700);
+}
+
+.star-1 {
+  top: 15%;
+  left: 15%;
+  font-size: 16px;
+  animation: starPulse 3s ease-in-out infinite;
+}
+
+.star-2 {
+  top: 25%;
+  right: 20%;
+  font-size: 20px;
+  animation: starPulse 4s ease-in-out infinite;
+}
+
+.star-3 {
+  top: 45%;
+  left: 25%;
+  font-size: 14px;
+  animation: starPulse 2.5s ease-in-out infinite;
+}
+
+.star-4 {
+  top: 55%;
+  right: 15%;
+  font-size: 18px;
+  animation: starPulse 3.5s ease-in-out infinite;
+}
+
+.star-5 {
+  top: 35%;
+  left: 45%;
+  font-size: 22px;
+  animation: starPulse 2s ease-in-out infinite;
+}
+
+.star-6 {
+  top: 65%;
+  left: 35%;
+  font-size: 12px;
+  animation: starPulse 4.5s ease-in-out infinite;
+}
+
+.star-7 {
+  top: 75%;
+  right: 25%;
+  font-size: 16px;
+  animation: starPulse 3.8s ease-in-out infinite;
+}
+
+.star-8 {
+  top: 85%;
+  left: 55%;
+  font-size: 19px;
+  animation: starPulse 2.8s ease-in-out infinite;
+}
+
+.star-9 {
+  top: 20%;
+  left: 65%;
+  font-size: 15px;
+  animation: starPulse 3.2s ease-in-out infinite;
+}
+
+.star-10 {
+  top: 40%;
+  right: 35%;
+  font-size: 17px;
+  animation: starPulse 4.2s ease-in-out infinite;
 }
 
 .ufos {
@@ -395,6 +505,17 @@ body {
 @keyframes satelliteOrbit {
   0% { transform: rotate(0deg) translateX(0px) rotate(0deg); }
   100% { transform: rotate(360deg) translateX(0px) rotate(-360deg); }
+}
+
+@keyframes starPulse {
+  0%, 100% { 
+    transform: scale(1);
+    filter: drop-shadow(0 0 8px #ffd700);
+  }
+  50% { 
+    transform: scale(1.3);
+    filter: drop-shadow(0 0 12px #ffd700) drop-shadow(0 0 20px #ffd700);
+  }
 }
 
 canvas#game {
